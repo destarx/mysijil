@@ -1,1 +1,390 @@
-test
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mySijil – Semakan Sijil Kejohanan Skuasy MSSB Miri 2026</title>
+<meta name="description" content="Semak dan muat turun sijil pemenang Kejohanan Skuasy MSSB Miri 2026 menggunakan nombor kad pengenalan murid.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Russo+One&family=Great+Vibes&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --merah:#E8343A; --oren:#F79A4F; --tengah:#EE5A3C;
+    --teks:#2A1308; --lembut:#6B4A3E; --emas:#E0A10A; --biru:#1B2A8F;
+    --latar:#FFF7F2; --kad:#FFFFFF; --garis:#F1D9CC;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:'Poppins',system-ui,sans-serif;color:var(--teks);background:var(--latar);min-height:100vh;display:flex;flex-direction:column}
+  a{color:var(--biru)}
+
+  /* Header */
+  .hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(135deg,var(--merah) 0%,var(--tengah) 50%,var(--oren) 100%);padding:28px 20px 72px;text-align:center}
+  .hero::before,.hero::after{content:"";position:absolute;background:#fff;opacity:.9;transform:rotate(-38deg)}
+  .hero::before{width:260px;height:26px;right:-60px;top:22px;box-shadow:0 46px 0 -6px rgba(255,255,255,.55),0 86px 0 -10px rgba(255,255,255,.35)}
+  .hero::after{width:240px;height:22px;left:-70px;bottom:40px;box-shadow:0 -40px 0 -6px rgba(255,255,255,.5)}
+  .logos{display:flex;justify-content:center;align-items:center;gap:14px;margin-bottom:10px;position:relative;z-index:1}
+  .logos img{height:52px;width:auto;filter:drop-shadow(0 2px 4px rgba(0,0,0,.18))}
+  .logos img.mid{height:60px}
+  .hero h1{margin:6px 0 0;text-wrap:balance;font-family:'Anton',sans-serif;font-weight:400;font-size:clamp(34px,7vw,56px);letter-spacing:2px;line-height:1.05;color:#141414;position:relative;z-index:1}
+  .hero .sub{margin:6px 0 0;font-family:'Russo One',sans-serif;font-size:clamp(11px,2.6vw,14px);letter-spacing:.5px;color:#2A1308;position:relative;z-index:1}
+  .hero .skrip{margin:4px 0 0;font-family:'Great Vibes',cursive;font-size:clamp(34px,7vw,52px);line-height:1.1;color:#fff;text-shadow:0 0 6px rgba(255,255,255,.8),0 0 18px rgba(255,170,130,.9);position:relative;z-index:1}
+
+  main{flex:1;width:100%;max-width:880px;margin:-48px auto 0;padding:0 16px 40px;position:relative;z-index:2}
+  .kad{background:var(--kad);border:1px solid var(--garis);border-radius:16px;box-shadow:0 10px 30px rgba(120,40,10,.10);padding:24px}
+  .kad h2{margin:0 0 4px;font-size:20px;font-weight:700}
+  .kad p.terang{margin:0 0 18px;color:var(--lembut);font-size:14px;line-height:1.55}
+  form{display:flex;flex-wrap:wrap;gap:10px}
+  label.lbl{display:block;width:100%;font-size:13px;font-weight:600;margin-bottom:-2px}
+  input[type=text]{flex:1 1 260px;min-width:0;height:52px;padding:0 16px;font:600 18px 'Poppins',sans-serif;letter-spacing:1.5px;border:2px solid var(--garis);border-radius:12px;color:var(--teks);background:#FFFCFA;outline:none}
+  input[type=text]:focus{border-color:var(--tengah);box-shadow:0 0 0 4px rgba(238,90,60,.15)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;padding:0 22px;border-radius:12px;border:2px solid transparent;font:700 15px 'Poppins',sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
+  .btn svg{width:18px;height:18px;flex:none}
+  .btn-utama{background:linear-gradient(135deg,var(--merah),var(--tengah));color:#fff}
+  .btn-utama:hover{filter:brightness(1.06)}
+  .btn-utama[disabled]{opacity:.7;cursor:wait}
+  .btn-garis{background:#fff;color:#8A2A12;border-color:#E9B9A6}
+  .btn-garis:hover{background:#FFF1EA}
+  @media (max-width:520px){ #btnCari{width:100%} .tindakan{width:100%} .tindakan .btn{flex:1 1 0} }
+  .hint{width:100%;margin:2px 0 0;font-size:12.5px;color:var(--lembut)}
+  .status{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:14px;line-height:1.5;display:none}
+  .status.show{display:block}
+  .status.ralat{background:#FDECEA;color:#8A1C12;border:1px solid #F5C2BB}
+  .status.info{background:#FFF6E0;color:#6B4A00;border:1px solid #F3DDA0}
+  .status.ok{background:#EAF7EE;color:#14532D;border:1px solid #BFE5CB}
+
+  .hasil{margin-top:22px;display:none}
+  .hasil.show{display:block}
+  .ringkas{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+  .ringkas .nama{font-family:'Russo One',sans-serif;font-size:18px;color:var(--biru)}
+  .ringkas .meta{font-size:13px;color:var(--lembut)}
+  .tindakan{display:flex;flex-wrap:wrap;gap:10px}
+  .pilihan{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .pilihan button{font:600 13px 'Poppins',sans-serif;padding:8px 12px;border-radius:999px;border:1.5px solid #E9B9A6;background:#fff;color:#8A2A12;cursor:pointer}
+  .pilihan button[aria-pressed=true]{background:#8A2A12;color:#fff;border-color:#8A2A12}
+  .pratonton{width:100%;display:flex;justify-content:center}
+  .bingkai{position:relative;overflow:hidden;border-radius:6px;box-shadow:0 12px 40px rgba(60,20,5,.22);background:#fff}
+  .bingkai #sijil{transform-origin:top left}
+
+  footer{text-align:center;font-size:12.5px;color:var(--lembut);padding:18px 16px 28px;line-height:1.6}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  #holder{position:fixed;left:-10000px;top:0;width:794px;height:1123px;pointer-events:none}
+
+  @page{size:A4 portrait;margin:0}
+  @media print{
+    html,body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .hero,.kad > :not(.hasil),.ringkas,.pilihan,footer,.status{display:none !important}
+    main{margin:0;padding:0;max-width:none}
+    .kad{border:0;box-shadow:none;padding:0;border-radius:0}
+    .hasil{margin:0}
+    .bingkai{width:794px !important;height:1123px !important;box-shadow:none;border-radius:0}
+    .bingkai #sijil{transform:none !important}
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+
+<header class="hero">
+  <div class="logos">
+    <img src="assets/logo-skjb.webp" alt="Logo SK Jalan Bintang">
+    <img class="mid" src="assets/logo-mssb.webp" alt="Logo MSSB Miri">
+    <img src="assets/logo-smkriam.webp" alt="Logo SMK Riam Miri">
+  </div>
+  <h1>KEJOHANAN SKUASY</h1>
+  <p class="sub">MAJLIS SUKAN SEKOLAH BAHAGIAN (MSSB) MIRI 2026</p>
+  <p class="skrip">Semakan Sijil</p>
+</header>
+
+<main>
+  <section class="kad" aria-labelledby="tajuk-cari">
+    <h2 id="tajuk-cari">Cari sijil murid</h2>
+    <p class="terang">Masukkan nombor kad pengenalan (MyKid) atau nombor sijil lahir murid. Sijil disediakan untuk pemenang tempat pertama hingga keempat bagi setiap kategori.</p>
+
+    <form id="borang" novalidate>
+      <label class="lbl" for="ic">No. Kad Pengenalan / Sijil Lahir</label>
+      <input id="ic" name="ic" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="cth: 150104130162" maxlength="20" aria-describedby="petua">
+      <button class="btn btn-utama" type="submit" id="btnCari">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <span>Cari Sijil</span>
+      </button>
+      <p class="hint" id="petua">Tanda “-” dan jarak tidak perlu ditaip.</p>
+    </form>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    <div id="hasil" class="hasil" aria-live="polite">
+      <div id="pilihan" class="pilihan" hidden></div>
+      <div class="ringkas">
+        <div>
+          <div class="nama" id="rNama"></div>
+          <div class="meta" id="rMeta"></div>
+        </div>
+        <div class="tindakan">
+          <button class="btn btn-utama" type="button" id="btnPdf">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
+            <span>Muat Turun PDF</span>
+          </button>
+          <button class="btn btn-garis" type="button" id="btnCetak">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"></path><rect x="3" y="9" width="18" height="8" rx="2"></rect><path d="M6 14h12v7H6z"></path></svg>
+            <span>Cetak</span>
+          </button>
+        </div>
+      </div>
+      <div class="pratonton">
+        <div class="bingkai" id="bingkai">
+<div id="sijil" style="position: relative; width: 794px; height: 1123px; overflow: hidden; box-sizing: border-box; font-family: 'Poppins', sans-serif; color: #2A1308; background: linear-gradient(150deg, #E8343A 0%, #EE5A3C 45%, #F79A4F 100%)">
+
+  <div style="position: absolute; left: 20px; top: 20px; right: 20px; bottom: 20px; border-radius: 4px; background: radial-gradient(ellipse 80% 80% at 50% 50%, #FFFFFF 72%, #FFF1EA 100%)"></div>
+
+  <img src="assets/watermark-mssb.webp" alt="" aria-hidden="true" style="position: absolute; left: 107px; top: 330px; width: 580px; height: 580px; opacity: 0.16">
+
+  <svg aria-hidden="true" width="794" height="1123" viewBox="0 0 794 1123" style="position: absolute; left: 0; top: 0">
+    <defs>
+      <clipPath id="kepalaRaket"><path d="M0,8 C62,8 92,64 92,130 C92,186 56,234 14,294 L-14,294 C-56,234 -92,186 -92,130 C-92,64 -62,8 0,8 Z"></path></clipPath>
+      <g id="raket">
+        <g clip-path="url(#kepalaRaket)" stroke="#EE5A3C" stroke-width="1.4" opacity="0.24"><path d="M-84,0 L-84,300"></path><path d="M-72,0 L-72,300"></path><path d="M-60,0 L-60,300"></path><path d="M-48,0 L-48,300"></path><path d="M-36,0 L-36,300"></path><path d="M-24,0 L-24,300"></path><path d="M-12,0 L-12,300"></path><path d="M0,0 L0,300"></path><path d="M12,0 L12,300"></path><path d="M24,0 L24,300"></path><path d="M36,0 L36,300"></path><path d="M48,0 L48,300"></path><path d="M60,0 L60,300"></path><path d="M72,0 L72,300"></path><path d="M84,0 L84,300"></path><path d="M-100,18 L100,18"></path><path d="M-100,30 L100,30"></path><path d="M-100,42 L100,42"></path><path d="M-100,54 L100,54"></path><path d="M-100,66 L100,66"></path><path d="M-100,78 L100,78"></path><path d="M-100,90 L100,90"></path><path d="M-100,102 L100,102"></path><path d="M-100,114 L100,114"></path><path d="M-100,126 L100,126"></path><path d="M-100,138 L100,138"></path><path d="M-100,150 L100,150"></path><path d="M-100,162 L100,162"></path><path d="M-100,174 L100,174"></path><path d="M-100,186 L100,186"></path><path d="M-100,198 L100,198"></path><path d="M-100,210 L100,210"></path><path d="M-100,222 L100,222"></path><path d="M-100,234 L100,234"></path><path d="M-100,246 L100,246"></path><path d="M-100,258 L100,258"></path><path d="M-100,270 L100,270"></path><path d="M-100,282 L100,282"></path><path d="M-100,294 L100,294"></path></g>
+        <g fill="none" stroke="#E04A2F" opacity="0.45">
+          <path d="M0,0 C70,0 100,60 100,130 C100,192 62,242 20,302 L-20,302 C-62,242 -100,192 -100,130 C-100,60 -70,0 0,0 Z" stroke-width="7"></path>
+          <path d="M-12,304 L-7,522 M12,304 L7,522" stroke-width="3"></path>
+          <rect x="-15" y="522" width="30" height="170" rx="7" stroke-width="3"></rect>
+          <g stroke-width="2"><path d="M-14,546 L14,530"></path><path d="M-14,562 L14,546"></path><path d="M-14,578 L14,562"></path><path d="M-14,594 L14,578"></path><path d="M-14,610 L14,594"></path><path d="M-14,626 L14,610"></path><path d="M-14,642 L14,626"></path><path d="M-14,658 L14,642"></path><path d="M-14,674 L14,658"></path><path d="M-14,690 L14,674"></path></g>
+          <rect x="-18" y="690" width="36" height="14" rx="5" stroke-width="3"></rect>
+        </g>
+      </g>
+      <g id="bola">
+        <circle cx="0" cy="0" r="17" fill="#2A1308" opacity="0.28"></circle>
+        <circle cx="-6" cy="-6" r="3.2" fill="#F2C200"></circle>
+        <circle cx="5" cy="-8" r="3.2" fill="#F2C200"></circle>
+      </g>
+    </defs>
+    <use href="#raket" transform="translate(96,560) rotate(-12) scale(0.42)"></use>
+    <use href="#raket" transform="translate(698,560) rotate(12) scale(0.42)"></use>
+    <use href="#bola" transform="translate(178,590)"></use>
+    <use href="#bola" transform="translate(616,590)"></use>
+    <g fill="none" stroke="#EE5A3C" stroke-linecap="round" stroke-width="2.5" opacity="0.4">
+      <path d="M200,576 L224,564 M203,592 L232,592 M200,608 L224,620"></path>
+      <path d="M594,576 L570,564 M591,592 L562,592 M594,608 L570,620"></path>
+    </g>
+    <g fill="#E8343A">
+      <polygon points="774,20 774,100 670,20" opacity="0.55"></polygon>
+      <polygon points="774,62 774,150 650,20 682,20" opacity="0.25"></polygon>
+      <polygon points="774,162 774,202 733,162" opacity="0.4"></polygon>
+    </g>
+    <g fill="#F79A4F">
+      <polygon points="20,1103 20,1023 124,1103" opacity="0.6"></polygon>
+      <polygon points="20,1061 20,973 144,1103 112,1103" opacity="0.28"></polygon>
+      <polygon points="20,961 20,921 61,961" opacity="0.45"></polygon>
+    </g>
+    <g fill="none" stroke-linecap="round">
+      <path d="M44,1080 C230,1008 520,1104 750,1012" stroke="#F79A4F" stroke-width="14" opacity="0.16"></path>
+      <path d="M44,1094 C250,1036 520,1118 750,1040" stroke="#E8343A" stroke-width="4" opacity="0.32"></path>
+      <path d="M44,1062 C210,1000 470,1072 750,990" stroke="#E8343A" stroke-width="1.5" opacity="0.3"></path>
+    </g>
+    <g stroke="#E0A10A" stroke-width="1.5" stroke-linecap="round">
+      <path d="M262,1012 L372,1012"></path>
+      <path d="M422,1012 L532,1012"></path>
+    </g>
+    <g fill="#E0A10A">
+      <rect x="254" y="1008" width="8" height="8" transform="rotate(45 258 1012)"></rect>
+      <rect x="532" y="1008" width="8" height="8" transform="rotate(45 536 1012)"></rect>
+    </g>
+    <use href="#bola" transform="translate(397,1012) scale(0.75)"></use>
+  </svg>
+
+  <div style="position: absolute; left: 32px; top: 32px; right: 32px; bottom: 32px; border: 1.5px solid #E0A10A; border-radius: 3px"></div>
+  <div style="position: absolute; left: 38px; top: 38px; right: 38px; bottom: 38px; border: 1px solid rgba(224, 161, 10, 0.45); border-radius: 2px"></div>
+
+  <div style="position: relative; height: 1123px; box-sizing: border-box; padding: 72px 70px 0; display: flex; flex-direction: column; align-items: center; text-align: center">
+
+    <div style="display: flex; gap: 22px; align-items: center; height: 76px">
+      <img src="assets/logo-skjb.webp" alt="Logo Sekolah Kebangsaan Jalan Bintang" style="height: 68px; width: auto">
+      <img src="assets/logo-mssb.webp" alt="Logo Majlis Sukan Sekolah-Sekolah Bahagian Miri" style="height: 76px; width: auto">
+      <img src="assets/logo-smkriam.webp" alt="Logo SMK Riam Miri" style="height: 66px; width: auto">
+    </div>
+
+    <h1 style="margin: 14px 0 0; font-family: 'Anton', sans-serif; font-weight: 400; font-size: 62px; line-height: 1.05; letter-spacing: 2px; white-space: nowrap; color: #141414">KEJOHANAN SKUASY</h1>
+    <p style="margin: 4px 0 0; font-family: 'Russo One', sans-serif; font-size: 13px; line-height: 1.4; letter-spacing: 0.5px; color: #2A1308">SEKOLAH RENDAH / SEKOLAH MENENGAH<br>MAJLIS SUKAN SEKOLAH BAHAGIAN (MSSB) MIRI 2026</p>
+
+    <p style="margin: 14px 0 0; font-family: 'Great Vibes', cursive; font-size: 72px; line-height: 1.1; color: #D9412F">Sijil Pencapaian</p>
+
+    <p style="margin: 18px 0 0; font-size: 15px; font-weight: 600; color: #2A1308">Dengan ini disahkan bahawa</p>
+
+    <div style="margin-top: 12px; width: 654px; padding: 12px 0; background: linear-gradient(90deg, rgba(224,161,10,0), #E0A10A 18%, #E0A10A 82%, rgba(224,161,10,0)) top / 100% 2px no-repeat, linear-gradient(90deg, rgba(224,161,10,0), #E0A10A 18%, #E0A10A 82%, rgba(224,161,10,0)) bottom / 100% 2px no-repeat, linear-gradient(90deg, rgba(255,226,122,0), rgba(255,226,122,0.22) 50%, rgba(255,226,122,0))">
+      <p style="margin: 0; font-family: 'Russo One', sans-serif; font-size: 30px; line-height: 1.2; letter-spacing: 1px; color: #1B2A8F; text-wrap: balance" id="namaBox"><span data-f="nama"></span></p>
+    </div>
+
+    <p style="margin: 12px 0 0; font-size: 15px; line-height: 1.5; color: #2A1308">No. KP: <strong><span data-f="ic"></span></strong></p>
+    <p style="margin: 0; font-size: 16px; font-weight: 700; line-height: 1.5; letter-spacing: 0.5px; color: #2A1308"><span data-f="sekolah"></span></p>
+
+    <div style="margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 6px">
+      <p style="margin: 0; font-size: 15px; color: #2A1308">telah mendapat tempat</p>
+      <p style="margin: 0; font-family: 'Anton', sans-serif; font-size: 40px; line-height: 1.1; letter-spacing: 1px; color: #141414"><span data-f="gelaran"></span></p>
+      <p style="margin: 0; font-size: 15px; color: #2A1308">dalam kategori</p>
+      <p style="margin: 0; font-family: 'Russo One', sans-serif; font-size: 22px; line-height: 1.25; color: #4B1FD1"><span data-f="kategori"></span></p>
+    </div>
+
+
+    <div style="margin-top: 22px; display: flex; flex-direction: column; align-items: center; gap: 2px">
+      <p style="margin: 0; font-size: 15px; color: #2A1308">bertempat di</p>
+      <p style="margin: 0; font-size: 17px; font-weight: 700; color: #7A1A0F">Gelanggang Skuasy SK Jalan Bintang</p>
+      <p style="margin: 6px 0 0; font-size: 15px; color: #2A1308">pada</p>
+      <p style="margin: 0; font-size: 17px; font-weight: 700; color: #7A1A0F">13-17 April 2026</p>
+    </div>
+
+    <div style="margin-top: 22px; width: 320px; display: flex; flex-direction: column; align-items: center">
+      <img src="assets/tandatangan.webp" alt="Tandatangan Guru Besar" style="height: 74px; width: auto; margin-bottom: -16px">
+      <div style="width: 100%; border-bottom: 1.5px solid #2A1308"></div>
+      <p style="margin: 4px 0 0; font-size: 13px; font-weight: 700; color: #2A1308">MOHAMAD YUSUF BIN ABU BAKAR</p>
+      <p style="margin: 0; font-size: 12px; line-height: 1.4; color: #2A1308">Guru Besar<br>Sekolah Kebangsaan Jalan Bintang, Miri</p>
+    </div>
+  </div>
+
+</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Kejohanan Skuasy MSSB Miri 2026 · Gelanggang Skuasy SK Jalan Bintang · 13–17 April 2026<br>
+  Sebarang pertanyaan atau pembetulan maklumat, sila hubungi pihak sekolah penganjur.
+</footer>
+
+<div id="holder" aria-hidden="true"></div>
+
+<script>
+(function(){
+  'use strict';
+  var GELARAN = {1:'JOHAN',2:'NAIB JOHAN',3:'KETIGA',4:'KEEMPAT'};
+  var dataP = fetch('data/sijil.json', {cache:'no-cache'}).then(function(r){ if(!r.ok) throw new Error('data'); return r.json(); });
+  var $ = function(id){ return document.getElementById(id); };
+  var borang=$('borang'), input=$('ic'), btnCari=$('btnCari'), status=$('status'), hasil=$('hasil');
+  var sijil=$('sijil'), bingkai=$('bingkai');
+  var semasa=null, senarai=[];
+
+  function b64(s){ var b=atob(s), u=new Uint8Array(b.length); for(var i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; }
+  function hex(u){ return Array.prototype.map.call(u,function(x){return ('0'+x.toString(16)).slice(-2);}).join(''); }
+  function norm(s){ return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
+  function papar(jenis, teks){ status.className='status show '+jenis; status.textContent=teks; }
+  function sorok(){ status.className='status'; status.textContent=''; }
+
+  async function cari(ic){
+    var data = await dataP;
+    var enc = new TextEncoder();
+    var km = await crypto.subtle.importKey('raw', enc.encode(ic), 'PBKDF2', false, ['deriveBits']);
+    var bits = new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2', salt:b64(data.salt), iterations:data.iter, hash:'SHA-256'}, km, 384));
+    var id = hex(bits.slice(0,16));
+    var rows = data.r[id];
+    if(!rows) return [];
+    var key = await crypto.subtle.importKey('raw', bits.slice(16,48), 'AES-GCM', false, ['decrypt']);
+    var out = [];
+    for (var i=0;i<rows.length;i++){
+      var pt = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64(rows[i][0])}, key, b64(rows[i][1]));
+      out.push(JSON.parse(new TextDecoder().decode(pt)));
+    }
+    return out;
+  }
+
+  function isi(el, rec){
+    el.querySelectorAll('[data-f]').forEach(function(s){
+      var f=s.getAttribute('data-f');
+      s.textContent = f==='gelaran' ? GELARAN[rec.kedudukan] : rec[f];
+    });
+    var n = rec.nama.length;
+    var nb = el.querySelector('#namaBox') || el.querySelector('[data-namabox]');
+    if (nb) nb.style.fontSize = (n<=24?30:(n<=30?26:23))+'px';
+  }
+
+  function skala(){
+    if(!hasil.classList.contains('show')) return;
+    var w = Math.min(794, bingkai.parentElement.clientWidth);
+    var s = w/794;
+    sijil.style.transform = 'scale('+s+')';
+    bingkai.style.width = w+'px';
+    bingkai.style.height = Math.round(1123*s)+'px';
+  }
+  window.addEventListener('resize', skala);
+
+  function tunjuk(rec){
+    semasa = rec;
+    isi(sijil, rec);
+    $('rNama').textContent = rec.nama;
+    $('rMeta').textContent = GELARAN[rec.kedudukan]+' · '+rec.kategori+' · '+rec.sekolah;
+    hasil.classList.add('show');
+    skala();
+  }
+
+  borang.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var ic = norm(input.value);
+    hasil.classList.remove('show');
+    if (ic.length < 6){ papar('ralat','Sila masukkan nombor kad pengenalan atau sijil lahir yang lengkap.'); input.focus(); return; }
+    if (!(window.crypto && crypto.subtle)){ papar('ralat','Pelayar ini tidak menyokong carian selamat. Sila guna Chrome, Safari atau Edge versi terkini.'); return; }
+    btnCari.disabled = true; btnCari.querySelector('span').textContent = 'Mencari…';
+    papar('info','Sedang menyemak rekod…');
+    try{
+      senarai = await cari(ic);
+      if (!senarai.length){
+        papar('ralat','Tiada sijil dijumpai untuk nombor ini. Sila semak semula nombor yang ditaip. Sijil hanya disediakan untuk pemenang tempat 1 hingga 4.');
+        return;
+      }
+      sorok();
+      var pil = $('pilihan');
+      pil.innerHTML = '';
+      if (senarai.length > 1){
+        pil.hidden = false;
+        senarai.forEach(function(r,i){
+          var b=document.createElement('button'); b.type='button';
+          b.textContent = GELARAN[r.kedudukan]+' – '+r.kategori;
+          b.setAttribute('aria-pressed', i===0?'true':'false');
+          b.addEventListener('click', function(){ pil.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed','false');}); b.setAttribute('aria-pressed','true'); tunjuk(r); });
+          pil.appendChild(b);
+        });
+      } else { pil.hidden = true; }
+      tunjuk(senarai[0]);
+      papar('ok','Tahniah! Sijil dijumpai. Anda boleh memuat turun atau mencetak sijil di bawah.');
+      setTimeout(function(){ hasil.scrollIntoView({behavior:'smooth', block:'start'}); }, 60);
+    } catch(err){
+      papar('ralat','Maaf, rekod tidak dapat dimuatkan. Sila cuba sebentar lagi.');
+    } finally {
+      btnCari.disabled = false; btnCari.querySelector('span').textContent = 'Cari Sijil';
+    }
+  });
+
+  $('btnCetak').addEventListener('click', function(){ window.print(); });
+
+  $('btnPdf').addEventListener('click', async function(){
+    if (!semasa) return;
+    var btn=this, label=btn.querySelector('span');
+    if (!(window.html2canvas && window.jspdf)){ papar('ralat','Modul PDF belum dimuatkan. Sila guna butang Cetak dan pilih "Simpan sebagai PDF".'); return; }
+    btn.disabled = true; label.textContent = 'Menjana PDF…';
+    var holder=$('holder');
+    try{
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      holder.innerHTML='';
+      var klon = sijil.cloneNode(true);
+      klon.removeAttribute('id'); klon.style.transform='none';
+      var nb = klon.querySelector('#namaBox'); if (nb){ nb.removeAttribute('id'); nb.setAttribute('data-namabox',''); }
+      holder.appendChild(klon);
+      isi(klon, semasa);
+      await Promise.all(Array.prototype.map.call(klon.querySelectorAll('img'), function(im){ return im.decode ? im.decode().catch(function(){}) : Promise.resolve(); }));
+      var canvas = await html2canvas(klon, {scale:2, backgroundColor:'#ffffff', useCORS:true, logging:false, width:794, height:1123, windowWidth:1200});
+      var pdf = new window.jspdf.jsPDF({orientation:'p', unit:'mm', format:'a4'});
+      pdf.addImage(canvas.toDataURL('image/jpeg', 0.93), 'JPEG', 0, 0, 210, 297);
+      var fail = 'Sijil-Skuasy-MSSB-2026-' + semasa.nama.replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'') + '.pdf';
+      pdf.save(fail);
+    } catch(err){
+      papar('ralat','PDF tidak dapat dijana pada peranti ini. Sila guna butang Cetak dan pilih "Simpan sebagai PDF".');
+    } finally {
+      holder.innerHTML='';
+      btn.disabled=false; label.textContent='Muat Turun PDF';
+    }
+  });
+})();
+</script>
+</body>
+</html>
