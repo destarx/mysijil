@@ -39,6 +39,39 @@
 
   async function masuk(email, pw) { return simpanToken(await authReq('token?grant_type=password', { email: email, password: pw })); }
 
+  /* Log masuk Google (akaun DELIMa) – aliran PKCE */
+  var PK = 'mysijil_pkce';
+  function b64url(u) { var s = ''; u = new Uint8Array(u); for (var i = 0; i < u.length; i++) s += String.fromCharCode(u[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  async function masukGoogle(redirectTo, domain) {
+    var verifier = b64url(crypto.getRandomValues(new Uint8Array(48)));
+    var challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+    try { localStorage.setItem(PK, verifier); } catch (e) { sessionStorage.setItem(PK, verifier); }
+    var q = 'provider=google&redirect_to=' + encodeURIComponent(redirectTo) +
+            '&code_challenge=' + challenge + '&code_challenge_method=s256&prompt=select_account' +
+            (domain ? '&hd=' + encodeURIComponent(domain) : '');
+    location.href = CFG.url + '/auth/v1/authorize?' + q;
+  }
+  /* Dipanggil semasa halaman dibuka: tukar ?code= kepada sesi. Pulangkan true jika log masuk berlaku. */
+  async function terimaRedirect() {
+    var u = new URL(location.href), h = new URLSearchParams(location.hash.replace(/^#/, ''));
+    var err = u.searchParams.get('error_description') || h.get('error_description');
+    var code = u.searchParams.get('code');
+    function bersih() { history.replaceState(null, '', location.pathname); }
+    if (err) { bersih(); throw Object.assign(new Error(err), { oauth: true }); }
+    if (h.get('access_token')) {
+      bersih();
+      simpanToken({ access_token: h.get('access_token'), refresh_token: h.get('refresh_token'), expires_in: +h.get('expires_in') || 3600 });
+      return true;
+    }
+    if (!code) return false;
+    var v = null;
+    try { v = localStorage.getItem(PK) || sessionStorage.getItem(PK); localStorage.removeItem(PK); sessionStorage.removeItem(PK); } catch (e) {}
+    bersih();
+    if (!v) throw Object.assign(new Error('Sesi log masuk tamat. Sila cuba semula.'), { oauth: true });
+    simpanToken(await authReq('token?grant_type=pkce', { auth_code: code, code_verifier: v }));
+    return true;
+  }
+
   var segar = null;
   async function token() {
     var s = sesi();
@@ -72,7 +105,7 @@
   }
 
   g.Supa = {
-    masuk: masuk, keluar: keluar, token: token, sesi: sesi,
+    masuk: masuk, masukGoogle: masukGoogle, terimaRedirect: terimaRedirect, keluar: keluar, token: token, sesi: sesi,
     pilih: function (path) { return rest('GET', path); },
     tambah: function (table, rows, prefer) { return rest('POST', table, rows, prefer || 'return=representation'); },
     ubah: function (path, data) { return rest('PATCH', path, data, 'return=representation'); },
