@@ -85,6 +85,14 @@
   .toast.show{opacity:1}
   .hidden{display:none !important}
   #cetakSemua{display:none}
+  .acara-bar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;margin-bottom:16px}
+  .acara-bar > div:first-child{flex:1 1 320px}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#EAF7EE;color:#14532D;margin-left:6px}
+  .tag.off{background:#ECEFF3;color:#3D4654}
+  .adm-list{display:grid;gap:6px;max-height:260px;overflow:auto}
+  .adm-row{display:flex;align-items:center;gap:10px;border:1px solid var(--garis);border-radius:10px;padding:8px 10px;font-size:13.5px}
+  .adm-row .sp{flex:1}
+  .loading{opacity:.55;pointer-events:none}
   ol.lang{margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--lembut)}
 
   @page{size:A4 portrait;margin:0}
@@ -111,16 +119,21 @@
       <img src="assets/logo-smkriam.webp" alt="Logo SMK Riam">
     </div>
     <h1>mySijil Admin</h1>
-    <p class="muted" style="margin:0">Pengurusan sijil pemenang</p>
+    <p class="muted" style="margin:0">Log masuk dengan akaun eRPH SK Jalan Bintang</p>
     <form id="fLogin">
       <div>
-        <label for="pw">Kata laluan admin</label>
+        <label for="email">E-mel</label>
+        <input id="email" type="text" inputmode="email" autocomplete="username" required>
+      </div>
+      <div>
+        <label for="pw">Kata laluan</label>
         <input id="pw" type="password" autocomplete="current-password" required>
       </div>
       <div id="loginMsg" class="msg ralat hidden" role="alert"></div>
       <button class="btn btn-u" type="submit" id="btnLogin">Log Masuk</button>
     </form>
-    <p class="muted" style="margin:14px 0 0"><a href="./" style="color:#8A2A12">← Kembali ke laman carian</a></p>
+    <p class="muted" style="margin:12px 0 0;font-size:12.5px">Lupa kata laluan? Hubungi pentadbir eRPH sekolah untuk set semula.</p>
+    <p class="muted" style="margin:8px 0 0"><a href="./" style="color:#8A2A12">← Kembali ke laman carian</a></p>
   </div>
 </section>
 
@@ -130,18 +143,24 @@
     <img src="assets/logo-mssb.webp" alt="">
     <div class="t">mySijil <small>Admin</small></div>
     <div class="sp"></div>
+    <span id="siapa" style="font-size:13px;font-weight:600"></span>
     <a class="btn btn-g btn-s" href="./" target="_blank" rel="noopener">Laman carian</a>
-    <button class="btn btn-g btn-s" type="button" id="btnTukarPw">Tukar kata laluan</button>
+    <button class="btn btn-g btn-s" type="button" id="btnUrusAdmin">Urus admin</button>
     <button class="btn btn-g btn-s" type="button" id="btnKeluar">Log keluar</button>
   </header>
 
   <main class="wrap">
-    <div id="dirty" class="dirty" role="status">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>
-      <span>Ada perubahan yang belum disimpan. Laman carian awam belum dikemas kini sehingga anda tekan <b>Simpan</b>.</span>
-    </div>
+    <div class="kad" id="kadUtama">
+      <div class="acara-bar">
+        <div>
+          <label for="pilihAcara">Kejohanan / acara</label>
+          <select id="pilihAcara"></select>
+        </div>
+        <button class="btn btn-g" type="button" id="btnAcara">Tetapan acara</button>
+        <button class="btn btn-g" type="button" id="btnAcaraBaru">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Acara baharu</button>
+      </div>
 
-    <div class="kad">
       <div class="alat">
         <button class="btn btn-u" type="button" id="btnTambah">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Tambah pemenang</button>
@@ -152,10 +171,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"></path><rect x="3" y="9" width="18" height="8" rx="2"></rect><path d="M6 14h12v7H6z"></path></svg>Cetak semua</button>
         <button class="btn btn-g" type="button" id="btnPdf">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>PDF semua</button>
-        <button class="btn btn-g" type="button" id="btnAcara">Tetapan acara</button>
-        <div style="flex:1"></div>
-        <button class="btn btn-u" type="button" id="btnSimpan">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h11l3 3v15H5z"></path><path d="M8 3v6h8V3"></path><path d="M8 21v-7h8v7"></path></svg>Simpan</button>
         <input type="file" id="fileXl" accept=".xlsx,.xls,.csv" class="hidden">
       </div>
 
@@ -175,7 +190,7 @@
           <tbody id="tb"></tbody>
         </table>
       </div>
-      <p class="muted" style="margin:10px 0 0">“Cetak semua” dan “PDF semua” mengikut tapisan yang sedang dipilih.</p>
+      <p class="muted" style="margin:10px 0 0">Semua perubahan disimpan serta-merta. “Cetak semua” dan “PDF semua” mengikut tapisan yang sedang dipilih.</p>
     </div>
   </main>
 </div>
@@ -196,7 +211,7 @@
       <datalist id="lsSek"></datalist><datalist id="lsKat"></datalist>
       <div id="rekMsg" class="msg ralat hidden" role="alert"></div>
     </div>
-    <div class="ft"><button class="btn btn-g" value="batal" formnovalidate>Batal</button><button class="btn btn-u" value="ok" id="rekOk">Simpan rekod</button></div>
+    <div class="ft"><button class="btn btn-g" value="batal" formnovalidate>Batal</button><button class="btn btn-u" type="button" id="rekOk">Simpan rekod</button></div>
   </form>
 </dialog>
 
@@ -207,21 +222,23 @@
   <div class="ft"><button class="btn btn-g" type="button" data-tutup>Tutup</button><button class="btn btn-u" type="button" id="lihatPdf">Muat turun PDF</button></div>
 </dialog>
 
-<!-- ===== Dialog: tetapan acara ===== -->
+<!-- ===== Dialog: tetapan / acara baharu ===== -->
 <dialog id="dlgAcara">
   <form method="dialog" id="fAcara">
-    <div class="hd"><h2>Tetapan acara</h2><button class="x" value="batal" aria-label="Tutup">✕</button></div>
+    <div class="hd"><h2 id="acaraTajuk">Tetapan acara</h2><button class="x" value="batal" aria-label="Tutup">✕</button></div>
     <div class="bd">
-      <p class="muted" style="margin:0">Teks ini dipaparkan pada setiap sijil dan pada laman carian.</p>
-      <div><label for="aTajuk">Tajuk kejohanan</label><input id="aTajuk" type="text" required></div>
-      <div><label for="aSub1">Subtajuk baris 1</label><input id="aSub1" type="text"></div>
-      <div><label for="aSub2">Subtajuk baris 2</label><input id="aSub2" type="text"></div>
+      <p class="muted" style="margin:0">Teks ini dipaparkan pada setiap sijil acara ini.</p>
+      <div><label for="aTajuk">Tajuk kejohanan</label><input id="aTajuk" type="text" required placeholder="cth: KEJOHANAN SKUASY"></div>
+      <div><label for="aSub1">Subtajuk baris 1</label><input id="aSub1" type="text" placeholder="cth: SEKOLAH RENDAH / SEKOLAH MENENGAH"></div>
+      <div><label for="aSub2">Subtajuk baris 2</label><input id="aSub2" type="text" placeholder="cth: MAJLIS SUKAN SEKOLAH BAHAGIAN (MSSB) MIRI 2026"></div>
       <div class="g2">
         <div><label for="aTempat">Tempat</label><input id="aTempat" type="text" required></div>
-        <div><label for="aTarikh">Tarikh</label><input id="aTarikh" type="text" required></div>
+        <div><label for="aTarikh">Tarikh</label><input id="aTarikh" type="text" required placeholder="cth: 13-17 April 2026"></div>
       </div>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:500"><input type="checkbox" id="aAktif" checked> Aktif: sijil acara ini boleh dicari oleh orang awam</label>
+      <div id="acaraMsg" class="msg ralat hidden" role="alert"></div>
     </div>
-    <div class="ft"><button class="btn btn-g" value="batal" formnovalidate>Batal</button><button class="btn btn-u" value="ok">Guna</button></div>
+    <div class="ft"><button class="btn btn-g" value="batal" formnovalidate>Batal</button><button class="btn btn-u" type="button" id="acaraOk">Simpan</button></div>
   </form>
 </dialog>
 
@@ -234,46 +251,24 @@
   </div>
   <div class="ft">
     <button class="btn btn-g" type="button" data-tutup>Batal</button>
-    <button class="btn btn-g" type="button" id="impTambah">Tambah ke senarai sedia ada</button>
-    <button class="btn btn-p" type="button" id="impGanti">Ganti semua rekod</button>
+    <button class="btn btn-g" type="button" id="impTambah">Tambah / kemas kini</button>
+    <button class="btn btn-p" type="button" id="impGanti">Ganti semua rekod acara ini</button>
   </div>
 </dialog>
 
-<!-- ===== Dialog: simpan ===== -->
-<dialog id="dlgSimpan">
-  <div class="hd"><h2>Simpan perubahan</h2><button class="x" type="button" data-tutup aria-label="Tutup">✕</button></div>
+<!-- ===== Dialog: urus admin ===== -->
+<dialog id="dlgAdmin">
+  <div class="hd"><h2>Admin mySijil</h2><button class="x" type="button" data-tutup aria-label="Tutup">✕</button></div>
   <div class="bd">
-    <p class="muted" style="margin:0">Laman ini dihoskan di GitHub Pages. Untuk mengemas kini laman carian, data disimpan terus ke repo <b id="repoNama"></b> menggunakan token GitHub anda.</p>
-    <div><label for="tok">Token GitHub (fine-grained, kebenaran <i>Contents: Read and write</i> untuk repo ini sahaja)</label>
-      <input id="tok" type="password" autocomplete="off" placeholder="github_pat_…"></div>
-    <label style="display:flex;align-items:center;gap:8px;font-weight:500"><input type="checkbox" id="tokIngat"> Ingat token pada peranti ini</label>
-    <details><summary class="muted" style="cursor:pointer">Cara dapatkan token</summary>
-      <ol class="lang">
-        <li>GitHub → Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token.</li>
-        <li>Repository access: <b>Only select repositories</b> → pilih repo ini.</li>
-        <li>Permissions → Repository permissions → <b>Contents: Read and write</b>.</li>
-        <li>Salin token dan tampal di atas.</li>
-      </ol></details>
-    <div id="simpanMsg" class="msg hidden" role="status"></div>
-  </div>
-  <div class="ft">
-    <button class="btn btn-g" type="button" id="btnMuatData">Muat turun fail data sahaja</button>
-    <button class="btn btn-u" type="button" id="btnGithub">Simpan ke GitHub</button>
-  </div>
-</dialog>
-
-<!-- ===== Dialog: tukar kata laluan ===== -->
-<dialog id="dlgPw">
-  <form method="dialog" id="fPw">
-    <div class="hd"><h2>Tukar kata laluan admin</h2><button class="x" value="batal" aria-label="Tutup">✕</button></div>
-    <div class="bd">
-      <div><label for="pw1">Kata laluan baharu (sekurang-kurangnya 10 aksara)</label><input id="pw1" type="password" autocomplete="new-password"></div>
-      <div><label for="pw2">Ulang kata laluan baharu</label><input id="pw2" type="password" autocomplete="new-password"></div>
-      <div id="pwMsg" class="msg ralat hidden" role="alert"></div>
-      <p class="muted" style="margin:0">Kata laluan baharu berkuat kuasa selepas anda tekan <b>Simpan</b>. Simpan kata laluan ini di tempat selamat: ia tidak boleh dipulihkan.</p>
+    <p class="muted" style="margin:0">Semua <b>pentadbir eRPH</b> secara automatik ialah admin mySijil. Guru lain boleh ditambah sebagai admin oleh pentadbir.</p>
+    <div class="adm-list" id="admList"></div>
+    <div id="admTambahBox" class="hidden">
+      <label for="admGuru">Tambah guru sebagai admin mySijil</label>
+      <div style="display:flex;gap:8px"><select id="admGuru"></select><button class="btn btn-u" type="button" id="admTambah">Tambah</button></div>
     </div>
-    <div class="ft"><button class="btn btn-g" value="batal" formnovalidate>Batal</button><button class="btn btn-u" value="ok">Tukar</button></div>
-  </form>
+    <div id="admMsg" class="msg hidden" role="status"></div>
+  </div>
+  <div class="ft"><button class="btn btn-g" type="button" data-tutup>Tutup</button></div>
 </dialog>
 
 <!-- ===== Dialog: pengesahan ===== -->
@@ -288,21 +283,30 @@
 
 <script src="assets/cert.js"></script>
 <script src="assets/sijil-core.js"></script>
+<script src="assets/supa.js"></script>
 <script>
 (function(){
   'use strict';
-  /* Repo GitHub yang menghoskan laman ini */
-  var REPO = { owner: 'destarx', name: 'mysijil', branch: 'main' };
-
   var S = window.Sijil, G = S.GELARAN;
   var $ = function(id){ return document.getElementById(id); };
-  var state = { pw: null, records: [], acara: null, dirty: false, editIdx: -1, imp: null, lihatRec: null };
+  var st = { saya:null, acara:[], acaraId:null, rekod:[], editId:null, imp:null, lihatRec:null };
+  var PILIH_REK = 'id,nama,ic,sekolah,kategori,kedudukan';
 
-  function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(function(){e.classList.remove('show');},2600); }
+  function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(function(){e.classList.remove('show');},2800); }
   function msg(el, jenis, t){ el.className='msg '+jenis; el.textContent=t; }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function setDirty(v){ state.dirty=v; $('dirty').classList.toggle('show', v); }
-  window.addEventListener('beforeunload', function(e){ if(state.dirty){ e.preventDefault(); e.returnValue=''; } });
+  function enc(v){ return encodeURIComponent(v); }
+  function acaraSemasa(){ return st.acara.filter(function(a){return a.id===st.acaraId;})[0] || null; }
+  function sibuk(v){ $('kadUtama').classList.toggle('loading', v); }
+  function terangRalat(e){
+    if(!e) return 'Ralat tidak diketahui.';
+    if(e.status===401 || /JWT/i.test(e.message)) return 'Sesi tamat. Sila log masuk semula.';
+    if(e.code==='23505') return 'Rekod bertindih: murid dengan No. KP ini sudah ada dalam kategori yang sama.';
+    if(e.code==='42501' || e.status===403) return 'Akaun anda tiada kebenaran untuk tindakan ini.';
+    if(e.code==='23514') return 'Maklumat tidak sah (semak No. KP dan kedudukan 1–4).';
+    if(e instanceof TypeError) return 'Tiada sambungan internet atau pelayan tidak dapat dihubungi.';
+    return e.message || 'Ralat tidak diketahui.';
+  }
   document.querySelectorAll('dialog [data-tutup]').forEach(function(b){ b.addEventListener('click', function(){ b.closest('dialog').close(); }); });
 
   function sah(tajuk, teks, ya){
@@ -316,45 +320,87 @@
   }
 
   /* ---------- Log masuk ---------- */
+  async function mulaApp(){
+    var r = await Supa.rpc('sijil_saya');
+    st.saya = r && r[0];
+    if(!st.saya || !st.saya.admin){
+      await Supa.keluar();
+      throw Object.assign(new Error('bukan-admin'), {bukanAdmin:true});
+    }
+    $('siapa').textContent = st.saya.nama || st.saya.email || '';
+    $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+    await muatAcara();
+  }
   $('fLogin').addEventListener('submit', async function(e){
     e.preventDefault();
-    var pw=$('pw').value, btn=$('btnLogin'), m=$('loginMsg');
-    if(!pw) return;
+    var email=$('email').value.trim(), pw=$('pw').value, btn=$('btnLogin'), m=$('loginMsg');
+    if(!email || !pw) return;
     btn.disabled=true; btn.textContent='Menyemak…'; m.classList.add('hidden');
     try{
-      var r = await fetch('data/admin.json',{cache:'no-cache'});
-      if(!r.ok) throw new Error('nofile');
-      var file = await r.json();
-      var data;
-      try{ data = await S.decryptAdmin(file, pw); }
-      catch(err){ throw new Error('pw'); }
-      state.pw = pw;
-      state.records = (data.records||[]).map(S.pickRec);
-      state.acara = Object.assign({}, S.ACARA_ASAL, data.acara||{});
+      await Supa.masuk(email, pw);
       $('pw').value='';
-      $('login').classList.add('hidden'); $('app').classList.remove('hidden');
-      render();
+      await mulaApp();
     }catch(err){
       m.classList.remove('hidden');
-      m.textContent = err.message==='pw' ? 'Kata laluan salah.' : 'Fail data admin tidak dapat dimuatkan. Sila cuba lagi.';
+      m.textContent = err.bukanAdmin ? 'Akaun ini bukan admin mySijil. Minta pentadbir eRPH menambah anda sebagai admin.'
+        : (err.status===400 || err.code==='invalid_credentials') ? 'E-mel atau kata laluan salah.'
+        : terangRalat(err);
     }finally{ btn.disabled=false; btn.textContent='Log Masuk'; }
   });
+  $('btnKeluar').addEventListener('click', async function(){ await Supa.keluar(); location.reload(); });
+  // Sesi sedia ada
+  if (Supa.sesi()) { Supa.token().then(function(t){ if(t) return mulaApp(); }).catch(function(){}); }
 
-  $('btnKeluar').addEventListener('click', async function(){
-    if(state.dirty && !(await sah('Log keluar','Perubahan yang belum disimpan akan hilang. Teruskan log keluar?','Log keluar'))) return;
-    setDirty(false); state.pw=null; state.records=[]; location.reload();
+  /* ---------- Acara ---------- */
+  async function muatAcara(pilih){
+    st.acara = await Supa.pilih('sijil_acara?select=*&order=dicipta.desc') || [];
+    var sel=$('pilihAcara');
+    sel.innerHTML = st.acara.map(function(a){ return '<option value="'+a.id+'">'+esc(a.tajuk+' – '+(a.subtajuk2||a.tarikh))+(a.aktif?'':' (tidak aktif)')+'</option>'; }).join('');
+    st.acaraId = pilih || (st.acara.some(function(a){return a.id===st.acaraId;}) ? st.acaraId : (st.acara[0] && st.acara[0].id));
+    if(st.acaraId) sel.value=st.acaraId;
+    await muatRekod();
+  }
+  $('pilihAcara').addEventListener('change', function(){ st.acaraId=this.value; ['qCari','qKat','qSek','qKed'].forEach(function(id){$(id).value='';}); muatRekod(); });
+
+  function bukaAcara(baru){
+    var a = baru ? {tajuk:'',subtajuk1:'',subtajuk2:'',tempat:'',tarikh:'',aktif:true} : acaraSemasa();
+    if(!a) { bukaAcara(true); return; }
+    $('acaraTajuk').textContent = baru ? 'Acara baharu' : 'Tetapan acara';
+    $('aTajuk').value=a.tajuk; $('aSub1').value=a.subtajuk1; $('aSub2').value=a.subtajuk2; $('aTempat').value=a.tempat; $('aTarikh').value=a.tarikh; $('aAktif').checked=!!a.aktif;
+    $('acaraMsg').classList.add('hidden');
+    $('dlgAcara').dataset.baru = baru ? '1' : '';
+    $('dlgAcara').showModal();
+  }
+  $('btnAcara').addEventListener('click', function(){ bukaAcara(false); });
+  $('btnAcaraBaru').addEventListener('click', function(){ bukaAcara(true); });
+  $('acaraOk').addEventListener('click', async function(){
+    var d={tajuk:$('aTajuk').value.trim().toUpperCase(),subtajuk1:$('aSub1').value.trim().toUpperCase(),subtajuk2:$('aSub2').value.trim().toUpperCase(),tempat:$('aTempat').value.trim(),tarikh:$('aTarikh').value.trim(),aktif:$('aAktif').checked};
+    if(!d.tajuk || !d.tempat || !d.tarikh){ msg($('acaraMsg'),'ralat','Sila isi tajuk, tempat dan tarikh.'); return; }
+    var btn=this; btn.disabled=true;
+    try{
+      if($('dlgAcara').dataset.baru){ var r=await Supa.tambah('sijil_acara', d); $('dlgAcara').close(); await muatAcara(r[0].id); toast('Acara baharu dicipta'); }
+      else { await Supa.ubah('sijil_acara?id=eq.'+enc(st.acaraId), d); $('dlgAcara').close(); await muatAcara(st.acaraId); toast('Tetapan acara disimpan'); }
+    }catch(err){ msg($('acaraMsg'),'ralat',terangRalat(err)); }
+    finally{ btn.disabled=false; }
   });
 
-  /* ---------- Senarai & tapisan ---------- */
-  function unik(f){ var s={}; state.records.forEach(function(r){ if(r[f]) s[r[f]]=1; }); return Object.keys(s).sort(); }
+  /* ---------- Rekod ---------- */
+  async function muatRekod(){
+    if(!st.acaraId){ st.rekod=[]; render(); return; }
+    sibuk(true);
+    try{ st.rekod = (await Supa.pilih('sijil_pemenang?select='+PILIH_REK+'&acara_id=eq.'+enc(st.acaraId)+'&order=kategori.asc,kedudukan.asc,nama.asc')) || []; }
+    catch(err){ toast(terangRalat(err)); st.rekod=[]; }
+    finally{ sibuk(false); }
+    render();
+  }
+  function unik(f){ var s={}; st.rekod.forEach(function(r){ if(r[f]) s[r[f]]=1; }); return Object.keys(s).sort(); }
   function isiPilihan(sel, arr, label){
     var v=sel.value; sel.innerHTML='<option value="">'+label+'</option>'+arr.map(function(x){return '<option>'+esc(x)+'</option>';}).join('');
     if(arr.indexOf(v)>=0) sel.value=v;
   }
   function tapisan(){
     var q=S.norm($('qCari').value), qn=$('qCari').value.trim().toUpperCase(), k=$('qKat').value, s=$('qSek').value, d=$('qKed').value;
-    return state.records.map(function(r,i){return {r:r,i:i};}).filter(function(o){
-      var r=o.r;
+    return st.rekod.filter(function(r){
       if(k && r.kategori!==k) return false;
       if(s && r.sekolah!==s) return false;
       if(d && String(r.kedudukan)!==d) return false;
@@ -362,116 +408,109 @@
       return true;
     });
   }
-  function susun(a){
-    return a.sort(function(x,y){ return x.r.kategori.localeCompare(y.r.kategori) || x.r.kedudukan-y.r.kedudukan || x.r.nama.localeCompare(y.r.nama); });
-  }
   function render(){
     isiPilihan($('qKat'), unik('kategori'), 'Semua kategori');
     isiPilihan($('qSek'), unik('sekolah'), 'Semua sekolah');
     $('lsSek').innerHTML=unik('sekolah').map(function(x){return '<option value="'+esc(x)+'">';}).join('');
     $('lsKat').innerHTML=unik('kategori').map(function(x){return '<option value="'+esc(x)+'">';}).join('');
-    var rows=susun(tapisan());
+    var a=acaraSemasa(), rows=tapisan();
     $('ringkasan').innerHTML =
-      '<span class="chip">Jumlah rekod: <b>'+state.records.length+'</b></span>'+
+      (a?'<span class="chip">'+esc(a.tajuk)+(a.aktif?'<span class="tag">Aktif</span>':'<span class="tag off">Tidak aktif</span>')+'</span>':'')+
+      '<span class="chip">Jumlah rekod: <b>'+st.rekod.length+'</b></span>'+
       '<span class="chip">Dipaparkan: <b>'+rows.length+'</b></span>'+
       '<span class="chip">Kategori: <b>'+unik('kategori').length+'</b></span>'+
       '<span class="chip">Sekolah: <b>'+unik('sekolah').length+'</b></span>';
-    if(!rows.length){ $('tb').innerHTML='<tr><td colspan="7" class="kosong">'+(state.records.length?'Tiada rekod sepadan dengan tapisan.':'Belum ada rekod. Tekan “Tambah pemenang” atau “Import Excel”.')+'</td></tr>'; return; }
-    $('tb').innerHTML = rows.map(function(o,n){
-      var r=o.r;
+    if(!st.acaraId){ $('tb').innerHTML='<tr><td colspan="7" class="kosong">Belum ada acara. Tekan “Acara baharu” untuk bermula.</td></tr>'; return; }
+    if(!rows.length){ $('tb').innerHTML='<tr><td colspan="7" class="kosong">'+(st.rekod.length?'Tiada rekod sepadan dengan tapisan.':'Belum ada rekod. Tekan “Tambah pemenang” atau “Import Excel”.')+'</td></tr>'; return; }
+    $('tb').innerHTML = rows.map(function(r,n){
       return '<tr><td class="n">'+(n+1)+'</td><td><b>'+esc(r.nama)+'</b></td><td class="kp">'+esc(r.ic)+'</td><td>'+esc(r.sekolah)+'</td><td>'+esc(r.kategori)+'</td>'+
         '<td><span class="pill k'+r.kedudukan+'">'+esc(G[r.kedudukan])+'</span></td>'+
-        '<td class="aksi"><button class="btn btn-g btn-s" data-a="lihat" data-i="'+o.i+'">Sijil</button> '+
-        '<button class="btn btn-g btn-s" data-a="sunting" data-i="'+o.i+'">Sunting</button> '+
-        '<button class="btn btn-p btn-s" data-a="padam" data-i="'+o.i+'" aria-label="Padam '+esc(r.nama)+'">Padam</button></td></tr>';
+        '<td class="aksi"><button class="btn btn-g btn-s" data-a="lihat" data-id="'+r.id+'">Sijil</button> '+
+        '<button class="btn btn-g btn-s" data-a="sunting" data-id="'+r.id+'">Sunting</button> '+
+        '<button class="btn btn-p btn-s" data-a="padam" data-id="'+r.id+'" aria-label="Padam '+esc(r.nama)+'">Padam</button></td></tr>';
     }).join('');
   }
   ['qCari','qKat','qSek','qKed'].forEach(function(id){ $(id).addEventListener('input', render); });
+  function cariRek(id){ return st.rekod.filter(function(r){return r.id===id;})[0]; }
 
   $('tb').addEventListener('click', async function(e){
     var b=e.target.closest('button[data-a]'); if(!b) return;
-    var i=+b.getAttribute('data-i'), r=state.records[i], a=b.getAttribute('data-a');
+    var r=cariRek(b.getAttribute('data-id')), a=b.getAttribute('data-a'); if(!r) return;
     if(a==='lihat') lihat(r);
-    else if(a==='sunting') bukaRek(i);
+    else if(a==='sunting') bukaRek(r);
     else if(a==='padam'){
-      if(await sah('Padam rekod','Padam rekod '+r.nama+' ('+G[r.kedudukan]+', '+r.kategori+')?','Padam')){
-        state.records.splice(i,1); setDirty(true); render(); toast('Rekod dipadam');
+      if(await sah('Padam rekod','Padam rekod '+r.nama+' ('+G[r.kedudukan]+', '+r.kategori+')? Sijil murid ini tidak lagi boleh dicari.','Padam')){
+        try{ await Supa.padam('sijil_pemenang?id=eq.'+enc(r.id)); toast('Rekod dipadam'); await muatRekod(); }
+        catch(err){ toast(terangRalat(err)); }
       }
     }
   });
 
-  /* ---------- Tambah / sunting ---------- */
-  function bukaRek(i){
-    state.editIdx=i; var r=i>=0?state.records[i]:{nama:'',ic:'',sekolah:'',kategori:$('qKat').value||'',kedudukan:1};
-    $('rekTajuk').textContent = i>=0?'Sunting rekod':'Tambah pemenang';
+  function bukaRek(r){
+    if(!st.acaraId){ toast('Cipta acara dahulu'); return; }
+    st.editId = r ? r.id : null;
+    r = r || {nama:'',ic:'',sekolah:'',kategori:$('qKat').value||'',kedudukan:1};
+    $('rekTajuk').textContent = st.editId?'Sunting rekod':'Tambah pemenang';
     $('fNama').value=r.nama; $('fIc').value=r.ic; $('fSek').value=r.sekolah; $('fKat').value=r.kategori; $('fKed').value=String(r.kedudukan);
     $('rekMsg').classList.add('hidden');
     $('dlgRek').showModal(); $('fNama').focus();
   }
-  $('btnTambah').addEventListener('click', function(){ bukaRek(-1); });
-  $('rekOk').addEventListener('click', function(e){
+  $('btnTambah').addEventListener('click', function(){ bukaRek(null); });
+  $('rekOk').addEventListener('click', async function(){
     var rec=S.pickRec({nama:$('fNama').value.toUpperCase(),ic:$('fIc').value,sekolah:$('fSek').value.toUpperCase(),kategori:$('fKat').value,kedudukan:$('fKed').value});
     var m=$('rekMsg'), err='';
     if(!rec.nama||!rec.ic||!rec.sekolah||!rec.kategori) err='Sila isi semua ruangan.';
     else if(S.norm(rec.ic).length<6) err='No. KP / sijil lahir tidak lengkap.';
     else {
-      var dup=state.records.some(function(r,j){ return j!==state.editIdx && S.norm(r.ic)===S.norm(rec.ic) && r.kategori===rec.kategori; });
-      if(dup) err='Murid dengan No. KP ini sudah ada dalam kategori yang sama.';
-      var sama=state.records.filter(function(r,j){ return j!==state.editIdx && r.kategori===rec.kategori && r.kedudukan===rec.kedudukan; });
+      var lain=st.rekod.filter(function(r){ return r.id!==st.editId; });
+      if(lain.some(function(r){ return S.norm(r.ic)===S.norm(rec.ic) && r.kategori===rec.kategori; })) err='Murid dengan No. KP ini sudah ada dalam kategori yang sama.';
+      var sama=lain.filter(function(r){ return r.kategori===rec.kategori && r.kedudukan===rec.kedudukan; });
       if(!err && sama.length) err='Kedudukan '+G[rec.kedudukan]+' dalam kategori ini sudah diberikan kepada '+sama[0].nama+'.';
     }
-    if(err){ e.preventDefault(); msg(m,'ralat',err); return; }
-    if(state.editIdx>=0) state.records[state.editIdx]=rec; else state.records.push(rec);
-    setDirty(true); render(); toast(state.editIdx>=0?'Rekod dikemas kini':'Rekod ditambah');
+    if(err){ msg(m,'ralat',err); return; }
+    var btn=this; btn.disabled=true;
+    try{
+      if(st.editId) await Supa.ubah('sijil_pemenang?id=eq.'+enc(st.editId), rec);
+      else { rec.acara_id=st.acaraId; await Supa.tambah('sijil_pemenang', rec); }
+      $('dlgRek').close(); toast(st.editId?'Rekod dikemas kini':'Rekod ditambah'); await muatRekod();
+    }catch(e2){ msg(m,'ralat',terangRalat(e2)); }
+    finally{ btn.disabled=false; }
   });
 
   /* ---------- Lihat sijil ---------- */
   function lihat(r){
-    state.lihatRec=r;
+    st.lihatRec=r;
     $('lihatTajuk').textContent=r.nama;
     var b=$('lihatBingkai'); b.innerHTML='';
-    var el=S.makeCert(r, state.acara); b.appendChild(el);
+    var el=S.makeCert(r, acaraSemasa()); b.appendChild(el);
     $('dlgLihat').showModal();
     var w=Math.min(794, $('lihatBox').clientWidth-28), s=w/794;
     el.style.transform='scale('+s+')'; b.style.width=w+'px'; b.style.height=Math.round(1123*s)+'px';
   }
   $('lihatPdf').addEventListener('click', async function(){
-    var r=state.lihatRec, btn=this; btn.disabled=true; btn.textContent='Menjana…';
-    try{ await S.toPdf([r], state.acara, 'Sijil-'+S.fileName(r.nama)+'.pdf'); }
+    var r=st.lihatRec, btn=this; btn.disabled=true; btn.textContent='Menjana…';
+    try{ await S.toPdf([r], acaraSemasa(), 'Sijil-'+S.fileName(r.nama)+'.pdf'); }
     catch(err){ toast('PDF gagal dijana. Cuba “Cetak semua” dan simpan sebagai PDF.'); }
     finally{ btn.disabled=false; btn.textContent='Muat turun PDF'; }
   });
 
   /* ---------- Cetak / PDF semua ---------- */
   $('btnCetak').addEventListener('click', function(){
-    var rows=susun(tapisan()); if(!rows.length){ toast('Tiada rekod untuk dicetak'); return; }
-    var c=$('cetakSemua'); c.innerHTML='';
-    rows.forEach(function(o){ c.appendChild(S.makeCert(o.r, state.acara)); });
-    var imgs=c.querySelectorAll('img');
-    Promise.all(Array.prototype.map.call(imgs,function(im){ return im.decode?im.decode().catch(function(){}):0; }))
+    var rows=tapisan(); if(!rows.length){ toast('Tiada rekod untuk dicetak'); return; }
+    var c=$('cetakSemua'), a=acaraSemasa(); c.innerHTML='';
+    rows.forEach(function(r){ c.appendChild(S.makeCert(r, a)); });
+    Promise.all(Array.prototype.map.call(c.querySelectorAll('img'),function(im){ return im.decode?im.decode().catch(function(){}):0; }))
       .then(function(){ return document.fonts?document.fonts.ready:0; })
       .then(function(){ window.print(); });
   });
   window.addEventListener('afterprint', function(){ $('cetakSemua').innerHTML=''; });
   $('btnPdf').addEventListener('click', async function(){
-    var rows=susun(tapisan()); if(!rows.length){ toast('Tiada rekod'); return; }
+    var rows=tapisan(); if(!rows.length){ toast('Tiada rekod'); return; }
     var btn=this, asal=btn.innerHTML; btn.disabled=true;
-    var nama = 'Sijil-'+S.fileName(($('qKat').value||$('qSek').value||'Semua'))+'.pdf';
-    try{
-      await S.toPdf(rows.map(function(o){return o.r;}), state.acara, nama, function(i,n){ btn.textContent='PDF '+i+'/'+n+'…'; });
-    }catch(err){ toast('PDF gagal dijana. Guna “Cetak semua” dan pilih Simpan sebagai PDF.'); }
+    var nama='Sijil-'+S.fileName($('qKat').value||$('qSek').value||(acaraSemasa()||{}).tajuk||'Semua')+'.pdf';
+    try{ await S.toPdf(rows, acaraSemasa(), nama, function(i,n){ btn.textContent='PDF '+i+'/'+n+'…'; }); }
+    catch(err){ toast('PDF gagal dijana. Guna “Cetak semua” dan pilih Simpan sebagai PDF.'); }
     finally{ btn.disabled=false; btn.innerHTML=asal; }
-  });
-
-  /* ---------- Tetapan acara ---------- */
-  $('btnAcara').addEventListener('click', function(){
-    var a=state.acara; $('aTajuk').value=a.tajuk; $('aSub1').value=a.subtajuk1; $('aSub2').value=a.subtajuk2; $('aTempat').value=a.tempat; $('aTarikh').value=a.tarikh;
-    $('dlgAcara').showModal();
-  });
-  $('fAcara').addEventListener('submit', function(e){
-    if(!e.submitter || e.submitter.value!=='ok') return;
-    state.acara={tajuk:$('aTajuk').value.trim(),subtajuk1:$('aSub1').value.trim(),subtajuk2:$('aSub2').value.trim(),tempat:$('aTempat').value.trim(),tarikh:$('aTarikh').value.trim()};
-    setDirty(true); toast('Tetapan acara dikemas kini');
   });
 
   /* ---------- Import Excel ---------- */
@@ -482,14 +521,15 @@
     var wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Pemenang'); XLSX.writeFile(wb,'Templat-mySijil.xlsx');
   });
   $('btnImport').addEventListener('click', function(){
+    if(!st.acaraId){ toast('Cipta acara dahulu'); return; }
     if(!window.XLSX){ toast('Modul Excel belum dimuatkan. Cuba sebentar lagi.'); return; }
     $('fileXl').value=''; $('fileXl').click();
   });
   function kedudukanDari(v){
     if(typeof v==='number') return v;
     var t=String(v||'').toUpperCase();
-    if(/NAIB/.test(t)) return 2; if(/JOHAN/.test(t)) return 1; if(/KETIGA|\b3/.test(t)) return 3; if(/KEEMPAT|\b4/.test(t)) return 4;
-    var n=parseInt(t,10); return n;
+    if(/NAIB/.test(t)) return 2; if(/JOHAN/.test(t)) return 1; if(/KETIGA/.test(t)) return 3; if(/KEEMPAT/.test(t)) return 4;
+    return parseInt(t,10);
   }
   function icDari(v){
     if(typeof v==='number'){ var s=String(Math.round(v)); while(s.length<12) s='0'+s; return s; }
@@ -503,10 +543,9 @@
       var aoa=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true});
       var hi=-1,col={};
       for(var i=0;i<Math.min(aoa.length,30);i++){
-        var row=aoa[i].map(function(x){return String(x).toLowerCase();});
         var c={};
-        row.forEach(function(h,j){
-          if(c.ic==null && /(no\.?\s*)?k\.?\s*p|kad pengenalan|sijil lahir|\bic\b|mykid/.test(h)) c.ic=j;
+        aoa[i].map(function(x){return String(x).toLowerCase();}).forEach(function(h,j){
+          if(c.ic==null && /(no\.?\s*)?k\.?\s*p\b|kad pengenalan|sijil lahir|\bic\b|mykid/.test(h)) c.ic=j;
           else if(c.sekolah==null && /sekolah|pasukan/.test(h)) c.sekolah=j;
           else if(c.nama==null && /nama/.test(h)) c.nama=j;
           else if(c.kategori==null && /kategori|acara/.test(h)) c.kategori=j;
@@ -515,100 +554,66 @@
         if(c.nama!=null && c.ic!=null){ hi=i; col=c; break; }
       }
       if(hi<0 || col.sekolah==null || col.kategori==null || col.ked==null) throw new Error('Lajur tidak dijumpai. Fail perlu ada lajur: Nama Murid, No. KP, Nama Sekolah, Kategori, Kedudukan. Muat turun "Templat Excel" sebagai panduan.');
-      var recs=[], skip=0;
+      var recs=[], skip=0, kunci={};
       aoa.slice(hi+1).forEach(function(row){
         var nama=String(row[col.nama]||'').trim(), ic=icDari(row[col.ic]);
         if(!nama && !ic) return;
-        var k=kedudukanDari(row[col.ked]);
-        if(!nama||S.norm(ic).length<6||!(k>=1&&k<=4)||!String(row[col.kategori]).trim()){ skip++; return; }
-        recs.push(S.pickRec({nama:nama.toUpperCase(),ic:ic,sekolah:String(row[col.sekolah]).trim().toUpperCase(),kategori:String(row[col.kategori]).trim(),kedudukan:k}));
+        var k=kedudukanDari(row[col.ked]), kat=String(row[col.kategori]).trim();
+        if(!nama||S.norm(ic).length<6||!(k>=1&&k<=4)||!kat){ skip++; return; }
+        var key=S.norm(ic)+'|'+kat; if(kunci[key]){ skip++; return; } kunci[key]=1;
+        recs.push(S.pickRec({nama:nama.toUpperCase(),ic:ic,sekolah:String(row[col.sekolah]).trim().toUpperCase(),kategori:kat,kedudukan:k}));
       });
       if(!recs.length) throw new Error('Tiada rekod sah dijumpai dalam fail ini.');
-      state.imp=recs;
-      msg($('impInfo'),'info', recs.length+' rekod sah dijumpai dalam “'+f.name+'”'+(skip?(' ('+skip+' baris diabaikan kerana maklumat tidak lengkap atau kedudukan bukan 1–4)'):'')+'. Semak pratonton di bawah.');
+      st.imp=recs;
+      msg($('impInfo'),'info', recs.length+' rekod sah dijumpai dalam “'+f.name+'”'+(skip?(' ('+skip+' baris diabaikan: maklumat tidak lengkap, kedudukan bukan 1–4, atau berulang)'):'')+'. Rekod akan dimasukkan ke acara “'+(acaraSemasa()||{}).tajuk+'”.');
       $('impTb').innerHTML=recs.slice(0,200).map(function(r){ return '<tr><td>'+esc(r.nama)+'</td><td class="kp">'+esc(r.ic)+'</td><td>'+esc(r.sekolah)+'</td><td>'+esc(r.kategori)+'</td><td>'+esc(G[r.kedudukan])+'</td></tr>'; }).join('');
       $('dlgImport').showModal();
     }catch(err){ toast(err.message||'Fail tidak dapat dibaca'); }
   });
-  $('impTambah').addEventListener('click', function(){
-    var ada={}; state.records.forEach(function(r){ ada[S.norm(r.ic)+'|'+r.kategori]=1; });
-    var baru=state.imp.filter(function(r){ return !ada[S.norm(r.ic)+'|'+r.kategori]; });
-    state.records=state.records.concat(baru); $('dlgImport').close(); setDirty(true); render();
-    toast(baru.length+' rekod ditambah'+(state.imp.length-baru.length?(', '+(state.imp.length-baru.length)+' pendua diabaikan'):''));
-  });
+  function barisImport(){ return st.imp.map(function(r){ return {acara_id:st.acaraId,nama:r.nama,ic:r.ic,sekolah:r.sekolah,kategori:r.kategori,kedudukan:r.kedudukan}; }); }
+  async function hantarImport(ganti){
+    var btns=[$('impTambah'),$('impGanti')]; btns.forEach(function(b){b.disabled=true;});
+    try{
+      if(ganti) await Supa.padam('sijil_pemenang?acara_id=eq.'+enc(st.acaraId));
+      await Supa.tambah('sijil_pemenang?on_conflict=acara_id,ic_norm,kategori', barisImport(), 'resolution=merge-duplicates,return=minimal');
+      $('dlgImport').close(); toast(st.imp.length+' rekod '+(ganti?'diimport (rekod lama diganti)':'ditambah / dikemas kini'));
+    }catch(err){ msg($('impInfo'),'ralat','Import gagal: '+terangRalat(err)); }
+    finally{ btns.forEach(function(b){b.disabled=false;}); await muatRekod(); }
+  }
+  $('impTambah').addEventListener('click', function(){ hantarImport(false); });
   $('impGanti').addEventListener('click', async function(){
     $('dlgImport').close();
-    if(!(await sah('Ganti semua rekod','Semua '+state.records.length+' rekod sedia ada akan diganti dengan '+state.imp.length+' rekod daripada fail Excel. Teruskan?','Ganti'))) return;
-    state.records=state.imp.slice(); setDirty(true); render(); toast('Rekod diganti');
+    if(!(await sah('Ganti semua rekod','Semua '+st.rekod.length+' rekod dalam acara ini akan dipadam dan diganti dengan '+st.imp.length+' rekod daripada fail Excel. Teruskan?','Ganti'))) return;
+    $('dlgImport').showModal(); hantarImport(true);
   });
 
-  /* ---------- Tukar kata laluan ---------- */
-  $('btnTukarPw').addEventListener('click', function(){ $('pw1').value=$('pw2').value=''; $('pwMsg').classList.add('hidden'); $('dlgPw').showModal(); });
-  $('fPw').addEventListener('submit', function(e){
-    if(e.submitter && e.submitter.value!=='ok') return;
-    var a=$('pw1').value, b=$('pw2').value, m=$('pwMsg');
-    if(a.length<10){ e.preventDefault(); msg(m,'ralat','Kata laluan mesti sekurang-kurangnya 10 aksara.'); return; }
-    if(a!==b){ e.preventDefault(); msg(m,'ralat','Kata laluan tidak sepadan.'); return; }
-    state.pw=a; setDirty(true); toast('Kata laluan ditukar. Tekan Simpan untuk berkuat kuasa.');
-  });
-
-  /* ---------- Simpan ---------- */
-  function tokSimpanan(){ try{ return localStorage.getItem('mysijil_tok')||''; }catch(e){ return ''; } }
-  $('btnSimpan').addEventListener('click', function(){
-    $('repoNama').textContent=REPO.owner+'/'+REPO.name;
-    var t=tokSimpanan(); $('tok').value=t; $('tokIngat').checked=!!t;
-    $('simpanMsg').className='msg hidden';
-    $('dlgSimpan').showModal();
-  });
-  async function binaFail(onP){
-    var pub = await S.buildPublic(state.records, state.acara, onP);
-    var adm = await S.encryptAdmin({records:state.records, acara:state.acara}, state.pw);
-    return { pub: JSON.stringify(pub), adm: JSON.stringify(adm) };
-  }
-  function utf8b64(s){ var u=new TextEncoder().encode(s), b=''; for(var i=0;i<u.length;i+=0x8000) b+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(b); }
-  async function ghPut(tok, path, content, mesej){
-    var url='https://api.github.com/repos/'+REPO.owner+'/'+REPO.name+'/contents/'+path;
-    var h={'Authorization':'Bearer '+tok,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
-    var g=await fetch(url+'?ref='+REPO.branch,{headers:h,cache:'no-store'});
-    var sha=null;
-    if(g.ok){ sha=(await g.json()).sha; } else if(g.status!==404){ throw new Error('gh'+g.status); }
-    var p=await fetch(url,{method:'PUT',headers:h,body:JSON.stringify({message:mesej,content:utf8b64(content),sha:sha||undefined,branch:REPO.branch})});
-    if(!p.ok) throw new Error('gh'+p.status);
-  }
-  $('btnGithub').addEventListener('click', async function(){
-    var tok=$('tok').value.trim(), m=$('simpanMsg'), btn=this;
-    if(!tok){ msg(m,'ralat','Sila masukkan token GitHub, atau guna “Muat turun fail data sahaja”.'); return; }
-    try{ if($('tokIngat').checked) localStorage.setItem('mysijil_tok',tok); else localStorage.removeItem('mysijil_tok'); }catch(e){}
-    btn.disabled=true; $('btnMuatData').disabled=true;
+  /* ---------- Urus admin ---------- */
+  async function muatAdmin(){
+    var m=$('admMsg'); m.className='msg hidden';
     try{
-      msg(m,'info','Menyulitkan rekod…');
-      var f=await binaFail(function(i,n){ msg(m,'info','Menyulitkan rekod '+i+'/'+n+'…'); });
-      msg(m,'info','Menghantar ke GitHub…');
-      var waktu=new Date().toLocaleString('ms-MY');
-      await ghPut(tok,'data/admin.json',f.adm,'Kemas kini data admin ('+waktu+')');
-      await ghPut(tok,'data/sijil.json',f.pub,'Kemas kini data sijil ('+state.records.length+' rekod, '+waktu+')');
-      setDirty(false);
-      msg(m,'ok','Berjaya disimpan. Laman carian akan dikemas kini dalam 1–2 minit (masa GitHub Pages membina semula laman).');
-    }catch(err){
-      var s=String(err.message||'');
-      msg(m,'ralat', /gh401|gh403/.test(s) ? 'Token ditolak oleh GitHub. Pastikan token masih sah dan ada kebenaran “Contents: Read and write” untuk repo ini.'
-        : /gh404/.test(s) ? 'Repo tidak dijumpai atau token tiada akses kepada repo ini.'
-        : /gh409/.test(s) ? 'Fail sedang dikemas kini serentak. Sila cuba sekali lagi.'
-        : 'Gagal menyimpan ('+s+'). Semak sambungan internet dan cuba lagi, atau guna “Muat turun fail data sahaja”.');
-    }finally{ btn.disabled=false; $('btnMuatData').disabled=false; }
-  });
-  function muatTurun(nama, isi){
-    var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([isi],{type:'application/json'})); a.download=nama;
-    document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },1000);
+      var list = await Supa.rpc('sijil_senarai_admin') || [];
+      $('admList').innerHTML = list.map(function(a){
+        return '<div class="adm-row"><div><b>'+esc(a.nama||'-')+'</b><br><span class="muted">'+esc(a.email||'')+'</span></div><div class="sp"></div>'+
+          (a.sumber==='pentadbir' ? '<span class="tag">Pentadbir eRPH</span>' :
+            (st.saya.pentadbir ? '<button class="btn btn-p btn-s" data-buang="'+a.user_id+'">Buang</button>' : '<span class="tag off">Admin</span>'))+'</div>';
+      }).join('') || '<p class="muted">Tiada admin.</p>';
+      if(st.saya.pentadbir){
+        var guru = await Supa.rpc('sijil_senarai_guru') || [];
+        $('admGuru').innerHTML = guru.map(function(g){ return '<option value="'+g.id+'">'+esc(g.nama+' ('+g.email+')')+'</option>'; }).join('');
+        $('admTambahBox').classList.toggle('hidden', !guru.length);
+      } else $('admTambahBox').classList.add('hidden');
+    }catch(err){ msg(m,'ralat',terangRalat(err)); }
   }
-  $('btnMuatData').addEventListener('click', async function(){
-    var m=$('simpanMsg'), btn=this; btn.disabled=true;
-    try{
-      var f=await binaFail(function(i,n){ msg(m,'info','Menyulitkan rekod '+i+'/'+n+'…'); });
-      muatTurun('sijil.json',f.pub); setTimeout(function(){ muatTurun('admin.json',f.adm); },400);
-      msg(m,'ok','Dua fail dimuat turun: sijil.json dan admin.json. Muat naik kedua-duanya ke folder “data” dalam repo GitHub (Add file → Upload files) untuk mengemas kini laman.');
-    }catch(err){ msg(m,'ralat','Gagal menyediakan fail data.'); }
-    finally{ btn.disabled=false; }
+  $('btnUrusAdmin').addEventListener('click', function(){ $('dlgAdmin').showModal(); muatAdmin(); });
+  $('admTambah').addEventListener('click', async function(){
+    var id=$('admGuru').value; if(!id) return;
+    try{ await Supa.tambah('sijil_admin', {user_id:id, ditambah_oleh:(Supa.sesi().user||{}).id}, 'return=minimal'); toast('Admin ditambah'); await muatAdmin(); }
+    catch(err){ msg($('admMsg'),'ralat',terangRalat(err)); }
+  });
+  $('admList').addEventListener('click', async function(e){
+    var b=e.target.closest('[data-buang]'); if(!b) return;
+    try{ await Supa.padam('sijil_admin?user_id=eq.'+enc(b.getAttribute('data-buang'))); toast('Admin dibuang'); await muatAdmin(); }
+    catch(err){ msg($('admMsg'),'ralat',terangRalat(err)); }
   });
 })();
 </script>

@@ -149,22 +149,21 @@
 
 <script src="assets/cert.js"></script>
 <script src="assets/sijil-core.js"></script>
+<script src="assets/supa.js"></script>
 <script>
 (function(){
   'use strict';
   var S = window.Sijil, G = S.GELARAN;
   var $ = function(id){ return document.getElementById(id); };
   var borang=$('borang'), input=$('ic'), btnCari=$('btnCari'), status=$('status'), hasil=$('hasil'), bingkai=$('bingkai');
-  var data=null, semasa=null, senarai=[], el=null;
-  var dataP = fetch('data/sijil.json', {cache:'no-cache'}).then(function(r){ if(!r.ok) throw new Error('data'); return r.json(); })
-    .then(function(d){
-      data=d; var a=d.acara||S.ACARA_ASAL;
-      $('hTajuk').textContent=a.tajuk; $('hSub').textContent=a.subtajuk2;
-      $('fAcara').textContent=[a.tajuk, a.tempat, a.tarikh].join(' · ');
-      document.title='mySijil – Semakan Sijil '+a.tajuk;
-      return d;
-    });
-  dataP.catch(function(){});
+  var semasa=null, senarai=[], el=null;
+  function tajukAcara(a){
+    $('hTajuk').textContent=a.tajuk; $('hSub').textContent=a.subtajuk2;
+    $('fAcara').textContent=[a.tajuk, a.tempat, a.tarikh].filter(Boolean).join(' · ');
+    document.title='mySijil – Semakan Sijil '+a.tajuk;
+  }
+  Supa.pilih('sijil_acara?select=tajuk,subtajuk1,subtajuk2,tempat,tarikh&aktif=eq.true&order=dicipta.desc&limit=1')
+    .then(function(r){ if(r && r[0]) tajukAcara(r[0]); }).catch(function(){});
 
   function papar(jenis, teks){ status.className='status show '+jenis; status.textContent=teks; }
   function sorok(){ status.className='status'; status.textContent=''; }
@@ -179,7 +178,7 @@
 
   function tunjuk(rec){
     semasa = rec;
-    bingkai.innerHTML=''; el = S.makeCert(rec, data.acara); bingkai.appendChild(el);
+    bingkai.innerHTML=''; el = S.makeCert(rec, rec); bingkai.appendChild(el);
     $('rNama').textContent = rec.nama;
     $('rMeta').textContent = G[rec.kedudukan]+' · '+rec.kategori+' · '+rec.sekolah;
     hasil.classList.add('show'); skala();
@@ -190,12 +189,10 @@
     var ic = S.norm(input.value);
     hasil.classList.remove('show');
     if (ic.length < 6){ papar('ralat','Sila masukkan nombor kad pengenalan atau sijil lahir yang lengkap.'); input.focus(); return; }
-    if (!(window.crypto && crypto.subtle)){ papar('ralat','Pelayar ini tidak menyokong carian selamat. Sila guna Chrome, Safari atau Edge versi terkini.'); return; }
     btnCari.disabled = true; btnCari.querySelector('span').textContent = 'Mencari…';
     papar('info','Sedang menyemak rekod…');
     try{
-      await dataP;
-      senarai = await S.lookup(data, ic);
+      senarai = (await Supa.rpc('sijil_cari', {p_ic: ic})) || [];
       if (!senarai.length){ papar('ralat','Tiada sijil dijumpai untuk nombor ini. Sila semak semula nombor yang ditaip. Sijil hanya disediakan untuk pemenang tempat 1 hingga 4.'); return; }
       sorok();
       var pil = $('pilihan'); pil.innerHTML = '';
@@ -203,7 +200,7 @@
         pil.hidden = false;
         senarai.forEach(function(r,i){
           var b=document.createElement('button'); b.type='button';
-          b.textContent = G[r.kedudukan]+' – '+r.kategori;
+          b.textContent = G[r.kedudukan]+' – '+r.kategori+(senarai.some(function(x){return x.tajuk!==r.tajuk;})?' ('+r.tajuk+')':'');
           b.setAttribute('aria-pressed', i===0?'true':'false');
           b.addEventListener('click', function(){ pil.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed','false');}); b.setAttribute('aria-pressed','true'); tunjuk(r); });
           pil.appendChild(b);
@@ -213,7 +210,7 @@
       papar('ok','Tahniah! Sijil dijumpai. Anda boleh memuat turun atau mencetak sijil di bawah.');
       setTimeout(function(){ hasil.scrollIntoView({behavior:'smooth', block:'start'}); }, 60);
     } catch(err){
-      papar('ralat','Maaf, rekod tidak dapat dimuatkan. Sila cuba sebentar lagi.');
+      papar('ralat','Maaf, sistem tidak dapat dihubungi. Sila semak sambungan internet dan cuba sebentar lagi.');
     } finally {
       btnCari.disabled = false; btnCari.querySelector('span').textContent = 'Cari Sijil';
     }
@@ -224,7 +221,7 @@
     if (!semasa) return;
     var btn=this, label=btn.querySelector('span');
     btn.disabled = true; label.textContent = 'Menjana PDF…';
-    try{ await S.toPdf([semasa], data.acara, 'Sijil-'+S.fileName(semasa.nama)+'.pdf'); }
+    try{ await S.toPdf([semasa], semasa, 'Sijil-'+S.fileName(semasa.nama)+'.pdf'); }
     catch(err){ papar('ralat','PDF tidak dapat dijana pada peranti ini. Sila guna butang Cetak dan pilih "Simpan sebagai PDF".'); }
     finally{ btn.disabled=false; label.textContent='Muat Turun PDF'; }
   });
