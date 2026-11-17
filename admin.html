@@ -7,7 +7,7 @@
 <title>mySijil – Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Russo+One&family=Great+Vibes&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto+Condensed:wght@400;700&family=Russo+One&family=Great+Vibes&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{--merah:#E8343A;--oren:#F79A4F;--tengah:#EE5A3C;--teks:#2A1308;--lembut:#6B4A3E;--biru:#1B2A8F;--latar:#FFF7F2;--garis:#F1D9CC;--hijau:#14532D}
   *{box-sizing:border-box}
@@ -44,6 +44,11 @@
   #login h1{font-family:'Anton',sans-serif;font-weight:400;font-size:30px;letter-spacing:1px;margin:6px 0 2px}
   #login form{text-align:left;margin-top:16px;display:grid;gap:12px}
   #login .btn{width:100%;justify-content:center;height:46px}
+  .btn-delima{margin-top:18px;background:#fff;color:#1F1F1F;border-color:#DADCE0;font-weight:600}
+  .btn-delima:hover{background:#F8F9FA}
+  .btn-delima svg{width:20px;height:20px}
+  .atau{display:flex;align-items:center;gap:10px;margin:16px 0 4px;color:var(--lembut);font-size:12.5px}
+  .atau::before,.atau::after{content:"";flex:1;height:1px;background:var(--garis)}
 
   .alat{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
   .tapis{display:grid;grid-template-columns:2fr 1.4fr 1.4fr 1fr;gap:10px;margin-bottom:14px}
@@ -120,7 +125,11 @@
     </div>
     <h1>mySijil Admin</h1>
     <p class="muted" style="margin:0">Log masuk dengan akaun eRPH SK Jalan Bintang</p>
-    <form id="fLogin">
+    <button class="btn btn-delima" type="button" id="btnDelima">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+      Log masuk dengan akaun DELIMa</button>
+    <div class="atau"><span>atau guna e-mel &amp; kata laluan</span></div>
+    <form id="fLogin" style="margin-top:0">
       <div>
         <label for="email">E-mel</label>
         <input id="email" type="text" inputmode="email" autocomplete="username" required>
@@ -235,6 +244,9 @@
         <div><label for="aTempat">Tempat</label><input id="aTempat" type="text" required></div>
         <div><label for="aTarikh">Tarikh</label><input id="aTarikh" type="text" required placeholder="cth: 13-17 April 2026"></div>
       </div>
+      <div><label for="aReka">Reka bentuk sijil</label>
+        <select id="aReka"><option value="asal">Reka bentuk asal mySijil (A4)</option><option value="ppd">Templat rasmi PPD Miri (Letter)</option></select>
+        <p class="muted" style="margin:4px 0 0;font-size:12.5px">Templat PPD menggunakan teks tetap daripada templat pegawai (Kejohanan Skuasy MSSB Miri, 13–16 April 2026, tandatangan TPPD). Hanya nama, No. K/P, kedudukan dan kategori yang berubah.</p></div>
       <label style="display:flex;align-items:center;gap:8px;font-weight:500"><input type="checkbox" id="aAktif" checked> Aktif: sijil acara ini boleh dicari oleh orang awam</label>
       <div id="acaraMsg" class="msg ralat hidden" role="alert"></div>
     </div>
@@ -321,11 +333,12 @@
 
   /* ---------- Log masuk ---------- */
   async function mulaApp(){
-    var r = await Supa.rpc('sijil_saya');
+    var r = await Supa.rpc('sijil_akaun');
     st.saya = r && r[0];
     if(!st.saya || !st.saya.admin){
+      var tunggu = !!(st.saya && st.saya.menunggu);
       await Supa.keluar();
-      throw Object.assign(new Error('bukan-admin'), {bukanAdmin:true});
+      throw Object.assign(new Error('bukan-admin'), tunggu ? {menunggu:true} : {bukanAdmin:true});
     }
     $('siapa').textContent = st.saya.nama || st.saya.email || '';
     $('login').classList.add('hidden'); $('app').classList.remove('hidden');
@@ -343,13 +356,27 @@
     }catch(err){
       m.classList.remove('hidden');
       m.textContent = err.bukanAdmin ? 'Akaun ini bukan admin mySijil. Minta pentadbir eRPH menambah anda sebagai admin.'
+        : err.menunggu ? 'Akaun DELIMa ini belum diluluskan dalam eRPH. Minta pentadbir eRPH meluluskan akaun anda.'
         : (err.status===400 || err.code==='invalid_credentials') ? 'E-mel atau kata laluan salah.'
         : terangRalat(err);
     }finally{ btn.disabled=false; btn.textContent='Log Masuk'; }
   });
   $('btnKeluar').addEventListener('click', async function(){ await Supa.keluar(); location.reload(); });
-  // Sesi sedia ada
-  if (Supa.sesi()) { Supa.token().then(function(t){ if(t) return mulaApp(); }).catch(function(){}); }
+  function ralatLogin(err){
+    var m=$('loginMsg'); m.classList.remove('hidden');
+    m.textContent = err.menunggu ? 'Akaun DELIMa ini belum diluluskan dalam eRPH. Minta pentadbir eRPH meluluskan akaun anda.'
+      : err.bukanAdmin ? 'Akaun ini bukan admin mySijil. Minta pentadbir eRPH menambah anda sebagai admin.'
+      : err.oauth ? 'Log masuk DELIMa tidak berjaya: '+err.message
+      : terangRalat(err);
+  }
+  $('btnDelima').addEventListener('click', function(){
+    var b=this; b.disabled=true; b.lastChild.textContent=' Membuka Google…';
+    Supa.masukGoogle(location.origin+location.pathname, 'moe-dl.edu.my').catch(function(err){ b.disabled=false; b.lastChild.textContent=' Log masuk dengan akaun DELIMa'; ralatLogin(err); });
+  });
+  // Kembali daripada Google, atau sesi sedia ada
+  Supa.terimaRedirect().then(function(baru){
+    if (baru || Supa.sesi()) return Supa.token().then(function(t){ if(t) return mulaApp(); });
+  }).catch(ralatLogin);
 
   /* ---------- Acara ---------- */
   async function muatAcara(pilih){
@@ -363,10 +390,10 @@
   $('pilihAcara').addEventListener('change', function(){ st.acaraId=this.value; ['qCari','qKat','qSek','qKed'].forEach(function(id){$(id).value='';}); muatRekod(); });
 
   function bukaAcara(baru){
-    var a = baru ? {tajuk:'',subtajuk1:'',subtajuk2:'',tempat:'',tarikh:'',aktif:true} : acaraSemasa();
+    var a = baru ? {tajuk:'',subtajuk1:'',subtajuk2:'',tempat:'',tarikh:'',aktif:true,reka_bentuk:'asal'} : acaraSemasa();
     if(!a) { bukaAcara(true); return; }
     $('acaraTajuk').textContent = baru ? 'Acara baharu' : 'Tetapan acara';
-    $('aTajuk').value=a.tajuk; $('aSub1').value=a.subtajuk1; $('aSub2').value=a.subtajuk2; $('aTempat').value=a.tempat; $('aTarikh').value=a.tarikh; $('aAktif').checked=!!a.aktif;
+    $('aTajuk').value=a.tajuk; $('aSub1').value=a.subtajuk1; $('aSub2').value=a.subtajuk2; $('aTempat').value=a.tempat; $('aTarikh').value=a.tarikh; $('aAktif').checked=!!a.aktif; $('aReka').value=a.reka_bentuk||'asal';
     $('acaraMsg').classList.add('hidden');
     $('dlgAcara').dataset.baru = baru ? '1' : '';
     $('dlgAcara').showModal();
@@ -374,7 +401,7 @@
   $('btnAcara').addEventListener('click', function(){ bukaAcara(false); });
   $('btnAcaraBaru').addEventListener('click', function(){ bukaAcara(true); });
   $('acaraOk').addEventListener('click', async function(){
-    var d={tajuk:$('aTajuk').value.trim().toUpperCase(),subtajuk1:$('aSub1').value.trim().toUpperCase(),subtajuk2:$('aSub2').value.trim().toUpperCase(),tempat:$('aTempat').value.trim(),tarikh:$('aTarikh').value.trim(),aktif:$('aAktif').checked};
+    var d={tajuk:$('aTajuk').value.trim().toUpperCase(),subtajuk1:$('aSub1').value.trim().toUpperCase(),subtajuk2:$('aSub2').value.trim().toUpperCase(),tempat:$('aTempat').value.trim(),tarikh:$('aTarikh').value.trim(),aktif:$('aAktif').checked,reka_bentuk:$('aReka').value};
     if(!d.tajuk || !d.tempat || !d.tarikh){ msg($('acaraMsg'),'ralat','Sila isi tajuk, tempat dan tarikh.'); return; }
     var btn=this; btn.disabled=true;
     try{
@@ -415,7 +442,7 @@
     $('lsKat').innerHTML=unik('kategori').map(function(x){return '<option value="'+esc(x)+'">';}).join('');
     var a=acaraSemasa(), rows=tapisan();
     $('ringkasan').innerHTML =
-      (a?'<span class="chip">'+esc(a.tajuk)+(a.aktif?'<span class="tag">Aktif</span>':'<span class="tag off">Tidak aktif</span>')+'</span>':'')+
+      (a?'<span class="chip">'+esc(a.tajuk)+' · '+(a.reka_bentuk==='ppd'?'Templat PPD':'Reka bentuk asal')+(a.aktif?'<span class="tag">Aktif</span>':'<span class="tag off">Tidak aktif</span>')+'</span>':'')+
       '<span class="chip">Jumlah rekod: <b>'+st.rekod.length+'</b></span>'+
       '<span class="chip">Dipaparkan: <b>'+rows.length+'</b></span>'+
       '<span class="chip">Kategori: <b>'+unik('kategori').length+'</b></span>'+
@@ -484,8 +511,8 @@
     var b=$('lihatBingkai'); b.innerHTML='';
     var el=S.makeCert(r, acaraSemasa()); b.appendChild(el);
     $('dlgLihat').showModal();
-    var w=Math.min(794, $('lihatBox').clientWidth-28), s=w/794;
-    el.style.transform='scale('+s+')'; b.style.width=w+'px'; b.style.height=Math.round(1123*s)+'px';
+    var z=S.saiz(el), w=Math.min(z.w, $('lihatBox').clientWidth-28), s=w/z.w;
+    el.style.transform='scale('+s+')'; b.style.width=w+'px'; b.style.height=Math.round(z.h*s)+'px';
   }
   $('lihatPdf').addEventListener('click', async function(){
     var r=st.lihatRec, btn=this; btn.disabled=true; btn.textContent='Menjana…';
@@ -499,6 +526,7 @@
     var rows=tapisan(); if(!rows.length){ toast('Tiada rekod untuk dicetak'); return; }
     var c=$('cetakSemua'), a=acaraSemasa(); c.innerHTML='';
     rows.forEach(function(r){ c.appendChild(S.makeCert(r, a)); });
+    S.setHalaman(c.firstElementChild);
     Promise.all(Array.prototype.map.call(c.querySelectorAll('img'),function(im){ return im.decode?im.decode().catch(function(){}):0; }))
       .then(function(){ return document.fonts?document.fonts.ready:0; })
       .then(function(){ window.print(); });

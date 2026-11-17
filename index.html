@@ -7,7 +7,7 @@
 <meta name="description" content="Semak dan muat turun sijil pemenang Kejohanan Skuasy MSSB Miri 2026 menggunakan nombor kad pengenalan murid.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Russo+One&family=Great+Vibes&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto+Condensed:wght@400;700&family=Russo+One&family=Great+Vibes&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --merah:#E8343A; --oren:#F79A4F; --tengah:#EE5A3C;
@@ -77,7 +77,7 @@
     main{margin:0;padding:0;max-width:none}
     .kad{border:0;box-shadow:none;padding:0;border-radius:0}
     .hasil{margin:0}
-    .bingkai{width:794px !important;height:1123px !important;box-shadow:none;border-radius:0}
+    .bingkai{width:auto !important;height:auto !important;box-shadow:none;border-radius:0}
     .bingkai .sijil-a4{transform:none !important}
   }
 </style>
@@ -170,15 +170,15 @@
 
   function skala(){
     if(!el || !hasil.classList.contains('show')) return;
-    var w = Math.min(794, bingkai.parentElement.clientWidth), s = w/794;
+    var z = S.saiz(el), w = Math.min(z.w, bingkai.parentElement.clientWidth), s = w/z.w;
     el.style.transform = 'scale('+s+')';
-    bingkai.style.width = w+'px'; bingkai.style.height = Math.round(1123*s)+'px';
+    bingkai.style.width = w+'px'; bingkai.style.height = Math.round(z.h*s)+'px';
   }
   window.addEventListener('resize', skala);
 
   function tunjuk(rec){
     semasa = rec;
-    bingkai.innerHTML=''; el = S.makeCert(rec, rec); bingkai.appendChild(el);
+    bingkai.innerHTML=''; el = S.makeCert(rec, rec); bingkai.appendChild(el); S.setHalaman(el);
     $('rNama').textContent = rec.nama;
     $('rMeta').textContent = G[rec.kedudukan]+' · '+rec.kategori+' · '+rec.sekolah;
     hasil.classList.add('show'); skala();
